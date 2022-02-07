@@ -1,37 +1,17 @@
-version: '3'
+version: '3.6'
 services:
 
   user_events_api:
     build: ./user_events_api
-    restart: on-failure
     ports:
       - "8080:8080"
     depends_on:
-      rabbitmq:
-        condition: service_healty
-      links:
-        - rabbitmq
-    network_mode: "host"
+    restart: unless-stopped
 
   events_worker:
     build: ./events_worker
-    restart: on-failure
     ports:
       - "8090:8090"
     depends_on:
-      rabbitmq:
-        condition: service_healty
-      links:
-        - rabbitmq
-    network_mode: "host"
-
-  rabbitmq:
-    build: ./rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:15672" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - user_events_api
+    restart: unless-stopped
