@@ -30,6 +30,11 @@ git clone https://github.com/nordiws/user-events-api-docker.git
 docker-compose up
 ```
 
+## Accessing the endpoints
+
+* With a requisition app go to: localhost:8080 for main endpoint
+* For API documentation got o localhost:8080\doc from a browser
+
 ## Authors
 
 Contributors names and contact info

@@ -8,7 +8,18 @@ services:
       - "27017:27017"
       - "27018:27018"
     networks:
-      - events-network
+      - ueAPI-network
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: "rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - ueAPI-network
+    depends_on:
+      - mongodb
 
   user_events_api:
     build: ./user-events-api
@@ -17,10 +28,10 @@ services:
     links:
       - mongodb
     depends_on:
-      - mongodb
+      - rabbitmq
     restart: unless-stopped
     networks:
-      - events-network
+      - ueAPI-network
 
   events_worker:
     build: ./events-worker
@@ -32,10 +43,10 @@ services:
       - user_events_api
     restart: unless-stopped
     networks:
-      - events-network
+      - ueAPI-network
 
 networks:
-  events-network:
+  ueAPI-network:
     driver: bridge
 volumes:
   dbdata:
