@@ -1,17 +1,41 @@
 version: '3.6'
 services:
 
+  mongodb:
+    image: mongo:latest
+    container_name: "api-database"
+    ports:
+      - "27017:27017"
+      - "27018:27018"
+    networks:
+      - events-network
+
   user_events_api:
-    build: ./user_events_api
+    build: ./user-events-api
     ports:
       - "8080:8080"
+    links:
+      - mongodb
     depends_on:
+      - mongodb
     restart: unless-stopped
+    networks:
+      - events-network
 
   events_worker:
-    build: ./events_worker
+    build: ./events-worker
     ports:
       - "8090:8090"
+    links:
+      - mongodb
     depends_on:
       - user_events_api
     restart: unless-stopped
+    networks:
+      - events-network
+
+networks:
+  events-network:
+    driver: bridge
+volumes:
+  dbdata:
